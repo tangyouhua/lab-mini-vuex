@@ -13,7 +13,7 @@ import HelloWorld from './components/HelloWorld.vue'
   </div>
   <!-- <HelloWorld msg="Vite + Vue" /> -->
   <h1>mini-vuex</h1>
-  <p @click="$store.commit('add')">count: {{ $store.state.count }}</p>
+  <p @click="$store.commit('add'); $store.state={}">count: {{ $store.state.count }}</p>
   <p @click="$store.dispatch('add')">count: {{ $store.state.count }}</p>
 </template>
 
