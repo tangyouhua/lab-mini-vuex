@@ -1,4 +1,5 @@
-import { createStore } from "vuex"
+// import { createStore } from "vuex"
+import { createStore } from "../mini-vuex"
 
 // 创建Store实例
 const store = createStore({
