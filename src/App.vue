@@ -15,6 +15,7 @@ import HelloWorld from './components/HelloWorld.vue'
   <h1>mini-vuex</h1>
   <p @click="$store.commit('add')">count: {{ $store.state.count }}</p>
   <p @click="$store.dispatch('add')">count: {{ $store.state.count }}</p>
+  <p>doubleCounter: {{ $store.getters.doubleCounter }}</p>
 </template>
 
 <style scoped>

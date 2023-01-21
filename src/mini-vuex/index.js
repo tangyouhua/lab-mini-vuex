@@ -1,4 +1,4 @@
-import { reactive } from "vue"
+import { reactive, computed } from "vue"
 
 export function createStore(options) {
     // Store实例
@@ -47,6 +47,31 @@ export function createStore(options) {
 
     store.commit = commit.bind(store) // commit调用时的上下文为store
     store.dispatch = commit.bind(store) // dispatch调用时的上下文为store
+
+    // 定义store.getters
+    store.getters = {}
+
+    // 遍历用户定义getters
+    Object.keys(options.getters).forEach(key => {
+        // 定义计算属性
+        const result = computed(() => {
+            const getter = options.getters[key]
+            if (getter) {
+                return getter.call(store, store.state)
+            } else {
+                console.error('unknown getter type:' + key)
+                return ''
+            }
+        })
+        // 动态定义store.getters.xxx
+        // 值来自于用户定义的getter函数的返回值
+        Object.defineProperty(store.getters, key, {
+            // 只读
+            get() {
+                return result
+            }
+        })
+    })
 
     // 插件实现要求的install方法
     store.install = function (app) {
