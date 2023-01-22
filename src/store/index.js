@@ -3,6 +3,7 @@ import { createStore } from "../mini-vuex"
 
 // 创建Store实例
 const store = createStore({
+    strict: true,
     state() {
         return {
             count: 1

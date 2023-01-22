@@ -1,4 +1,4 @@
-import { reactive, computed } from "vue"
+import { reactive, computed, watch } from "vue"
 
 export function createStore(options) {
     // Store实例
@@ -14,6 +14,12 @@ export function createStore(options) {
         },
         _mutations: options.mutations,
         _actions: options.actions,
+        _commit: false, // 提交的标识符，如果通过commit方式修改状态，则设置为true
+        _withCommit(fn) { // fn就是用户设置的mutation执行函数
+            this._commit = true
+            fn()
+            this._commit = false
+        }
     }
     // Object.defineProperty(store, 'state', {
     //     get state() {
@@ -31,7 +37,10 @@ export function createStore(options) {
             console.error(`unknown mutation type: ${type}`)
             return
         }
-        entry.call(this.state, this.state, payload)
+        // 要使用withCommit方式提交
+        this._withCommit(() => {
+            entry.call(this.state, this.state, payload)
+        })
     }
 
     // dispatch(type, payload)
@@ -72,6 +81,19 @@ export function createStore(options) {
             }
         })
     })
+
+    // strict模式
+    if (options.strict) {
+        // 监听store.state变化
+        watch(store.state, () => {
+            if (!store._commit) {
+                console.warn('please use commit to mutate state')
+            }
+        }, {
+            deep: true,
+            flush: 'sync'
+        })
+    }
 
     // 插件实现要求的install方法
     store.install = function (app) {
